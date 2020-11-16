@@ -1,36 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 
-namespace Go5.File.IO.classen
+namespace Go5.File.IO.bestanden
 {
-    class I_O
+    public class StreamReaderClassen
     {
-        public string InputFolder = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 5\InputFolder\";
-        public string ZipBestand = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 2\Go5.Collections_Nieuwste_Console.zip";
-        public string ToRead_cs = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 5\InputFolder\Go5.Collections_Nieuwste_Console\Go5.Collections.Nieuwste\Go5.Collections.Nieuwste\Collecties";   
-        public string FileName = "Go5.CollectiesEnOvererving.txt";
+        MakeDirectory makeDirectory = new MakeDirectory();
 
-        public void MakeDirectory()
-        {
-            if (!Directory.Exists(InputFolder))
-            {
-                Directory.CreateDirectory(InputFolder);
-                ZipFile.ExtractToDirectory(ZipBestand, InputFolder);
-            }
-        }
-        //---------------------------------------------------
-        //public void MakeFile()
-        //{
-        //    string fullPath = InputFolder + FileName;
-        //    FileInfo fi = new FileInfo(fullPath);
-        //    if (!fi.Exists)
-        //    {
-        //        fi.Create();
-        //    }  
-        //}
-        //---------------------------------------------------
+        public static List<string> _LijstOpslagen = new List<string>();
+
         List<string> _Alles = new List<string>();
         List<string> _Using = new List<string>();
         List<string> _Namespace = new List<string>();
@@ -41,12 +20,10 @@ namespace Go5.File.IO.classen
         List<string> _Properties = new List<string>();
         List<string> _Inherits = new List<string>();
         List<string> _Foutmelding = new List<string>();
-        List<string> _LijstOpslagen = new List<string>();
         List<string> _Constructor = new List<string>();
-
         public void StreamRead()
         {
-            string[] arrDirectoryFiles = Directory.GetFiles(ToRead_cs);
+            string[] arrDirectoryFiles = Directory.GetFiles(makeDirectory.ToRead_cs);
             for (int i = 0; i < arrDirectoryFiles.Length; i++)
             {
                 _Foutmelding.Add("FOUTMELDING: ");
@@ -59,7 +36,7 @@ namespace Go5.File.IO.classen
                 _Using.Add("USING: ");
                 _Constructor.Add("CONSTRUCTOR: ");
                 string path = arrDirectoryFiles[i];
-                string fullPath = Path.Combine(ToRead_cs, path);
+                string fullPath = Path.Combine(makeDirectory.ToRead_cs, path);
                 string line;
                 string classnaam = "***";
                 using (StreamReader reader = new StreamReader(fullPath))
@@ -72,7 +49,7 @@ namespace Go5.File.IO.classen
                         }
                         if (line.Contains("class"))
                         {
-                            string[] parts =  line.Split(' ',StringSplitOptions.RemoveEmptyEntries);
+                            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                             if (parts[0] == "class")
                             {
                                 _Klass.Add(parts[1]);
@@ -86,14 +63,14 @@ namespace Go5.File.IO.classen
                             _Alles.Add(line);
                             Array.Clear(parts, 0, parts.Length);
                         }
-                         if (line.Contains("public " + classnaam))
+                        if (line.Contains("public " + classnaam))
                         {
                             _Constructor.Add(line);
                         }
                         if (!line.Contains("\n"))
                         {
                             countLijn++;
-                        }                       
+                        }
                         if (line.Contains("public void"))
                         {
                             _Method.Add(line);
@@ -112,7 +89,7 @@ namespace Go5.File.IO.classen
                         }
                     }
                     reader.Close();
-                } 
+                }
                 if (_Alles.Count > 1)
                 {
                     _Foutmelding.Add("FOUT!!  Er bevinden zich meer dan 1 class'e in een bestand!");
@@ -134,7 +111,7 @@ namespace Go5.File.IO.classen
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Constructor.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
-                _Foutmelding.Add("\n" + "______________________________________________________________________________________" + "\n\n\n\n");
+                _Foutmelding.Add("______________________________________________________________________________________" + "\n\n\n\n");
                 _Foutmelding.ForEach(Console.WriteLine);
 
                 foreach (string s in _Using)
@@ -187,20 +164,12 @@ namespace Go5.File.IO.classen
                 _Properties.Clear();
                 _Using.Clear();
                 _Constructor.Clear();
-                countLijn = 0;               
+                countLijn = 0;
             }
         }
-
-        public void Write()
+        public List<string> GeefLijstOpgeslagen()
         {
-            string fullPath = InputFolder + FileName;
-            FileInfo fi = new FileInfo(fullPath);
-            using StreamWriter sw = fi.CreateText();
-            for (int i = 0; i < _LijstOpslagen.Count; i++)
-            {
-                sw.WriteLine(_LijstOpslagen[i]);
-            }
-            sw.Close();
+            return _LijstOpslagen;
         }
     }
 }
