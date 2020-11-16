@@ -37,22 +37,22 @@ namespace Go5.File.IO.bestanden
                     {
                         if (line.Contains("namespace"))
                         {
-                            _Namespace.Add(line);
+                            _Namespace.Add(line.Trim());
                         }
                         if (line.Contains("class"))
                         {
                             string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                             if (parts[0] == "class")
                             {
-                                _Klass.Add(parts[1]);
+                                _Klass.Add(parts[1].Trim());
                                 classnaam = parts[1];
                             }
                             else
                             {
-                                _Klass.Add(parts[2]);
+                                _Klass.Add(parts[2].Trim());
                                 classnaam = parts[2];
                             }
-                            _Alles.Add(line);
+                            _Alles.Add(line.Trim());
                             Array.Clear(parts, 0, parts.Length);
                         }
                         if (line.Contains("interface"))
@@ -60,15 +60,15 @@ namespace Go5.File.IO.bestanden
                             string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                             if (parts[0] == "interface")
                             {
-                                _Interface.Add(parts[1]);
+                                _Interface.Add(parts[1].Trim());
                                 classnaam = parts[1];
                             }
                             else
                             {
-                                _Interface.Add(parts[2]);
+                                _Interface.Add(parts[2].Trim());
                                 classnaam = parts[2];
                             }
-                            _Alles.Add(line);
+                            _Alles.Add(line.Trim());
                             Array.Clear(parts, 0, parts.Length);
                         }
                         if (!line.Contains("\n"))

@@ -57,23 +57,23 @@ namespace Go5.File.IO.bestanden
                         }
                         if (line.Contains("public " + classnaam))
                         {
-                            _Constructor.Add(line);
+                            _Constructor.Add(line.Trim());
                         }
                         if (line.Contains("public void"))
                         {
-                            _Method.Add(line);
+                            _Method.Add(line.Trim());
                         }
                         if (line.Contains("{ get; set; }"))
                         {
-                            _Properties.Add(line);
+                            _Properties.Add(line.Trim());
                         }
                         if (line.Contains("using System"))
                         {
-                            _Using.Add(line);
+                            _Using.Add(line.Trim());
                         }
                         if (line.Contains("class") && line.Contains(":"))
                         {
-                            _Inherits.Add(line);
+                            _Inherits.Add(line.Trim());
                         }
                     }
                     reader.Close();
