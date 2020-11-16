@@ -13,6 +13,7 @@ namespace Go5.File.IO.bestanden
         List<string> _Alles = new List<string>();
         List<string> _Namespace = new List<string>();
         List<string> _Klass = new List<string>();
+        List<string> _Interface = new List<string>();
         List<string> _Lijn = new List<string>();
         List<string> _Foutmelding = new List<string>();
         int countLijn = 0;
@@ -23,6 +24,7 @@ namespace Go5.File.IO.bestanden
             {
                 _Foutmelding.Add("FOUTMELDING: ");
                 _Klass.Add("CLASS: ");
+                _Interface.Add("Interface: ");
                 _Lijn.Add("LIJNEN: ");
                 _Namespace.Add("NAMESPACE: ");
                 string path = arrDirectoryFiles[i];
@@ -53,6 +55,22 @@ namespace Go5.File.IO.bestanden
                             _Alles.Add(line);
                             Array.Clear(parts, 0, parts.Length);
                         }
+                        if (line.Contains("interface"))
+                        {
+                            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            if (parts[0] == "interface")
+                            {
+                                _Interface.Add(parts[1]);
+                                classnaam = parts[1];
+                            }
+                            else
+                            {
+                                _Interface.Add(parts[2]);
+                                classnaam = parts[2];
+                            }
+                            _Alles.Add(line);
+                            Array.Clear(parts, 0, parts.Length);
+                        }
                         if (!line.Contains("\n"))
                         {
                             countLijn++;
@@ -72,8 +90,11 @@ namespace Go5.File.IO.bestanden
                 //Console.WriteLine("------------------------------------------------------------------------------------");
                 //_Lijn.ForEach(Console.WriteLine);
                 //Console.WriteLine("------------------------------------------------------------------------------------");
-                _Foutmelding.Add("______________________________________________________________________________________");
+                //_Foutmelding.Add("______________________________________________________________________________________");
                 //_Foutmelding.ForEach(Console.WriteLine);
+                if (_Klass.Count == 1) _Klass.Add("Geen Classe!");
+                if (_Interface.Count == 1) _Interface.Add("Geen Interface!");
+                if (_Foutmelding.Count == 1) _Foutmelding.Add("Geen twee classen in  een bestand!");
 
                 foreach (string s in _Namespace)
                 {
@@ -81,6 +102,11 @@ namespace Go5.File.IO.bestanden
                 }
                 _LijstOpslagen.Add("\n");
                 foreach (string s in _Klass)
+                {
+                    _LijstOpslagen.Add(s);
+                }
+                _LijstOpslagen.Add("\n");
+                foreach (string s in _Interface)
                 {
                     _LijstOpslagen.Add(s);
                 }
@@ -94,10 +120,11 @@ namespace Go5.File.IO.bestanden
                 {
                     _LijstOpslagen.Add(s);
                 }
-                //_LijstOpslagen.Add("\n");
+                _LijstOpslagen.Add("______________________________________________________________________________________");
                 _Alles.Clear();
                 _Foutmelding.Clear();
                 _Klass.Clear();
+                _Interface.Clear();
                 _Lijn.Clear();
                 _Namespace.Clear();
                 countLijn = 0;

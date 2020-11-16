@@ -10,30 +10,24 @@ namespace Go5.File.IO.bestanden
 
         public static List<string> _LijstOpslagen = new List<string>();
 
-        List<string> _Alles = new List<string>();
         List<string> _Using = new List<string>();
         List<string> _Namespace = new List<string>();
         List<string> _Klass = new List<string>();
-        List<string> _Lijn = new List<string>();
-        int countLijn = 0;
         List<string> _Method = new List<string>();
         List<string> _Properties = new List<string>();
         List<string> _Inherits = new List<string>();
-        List<string> _Foutmelding = new List<string>();
         List<string> _Constructor = new List<string>();
         public void StreamRead()
         {
             string[] arrDirectoryFiles = Directory.GetFiles(makeDirectory.ToRead_cs);
             for (int i = 0; i < arrDirectoryFiles.Length; i++)
             {
-                _Foutmelding.Add("FOUTMELDING: ");
-                _Inherits.Add("INHERITS: ");
-                _Klass.Add("CLASS: ");
-                _Lijn.Add("LIJNEN: ");
-                _Method.Add("METHODS: ");
-                _Namespace.Add("NAMESPACE: ");
-                _Properties.Add("PROPERTIES: ");
                 _Using.Add("USING: ");
+                _Namespace.Add("NAMESPACE: ");
+                _Klass.Add("CLASS: ");
+                _Method.Add("METHODS: ");
+                _Properties.Add("PROPERTIES: ");
+                _Inherits.Add("INHERITS: ");
                 _Constructor.Add("CONSTRUCTOR: ");
                 string path = arrDirectoryFiles[i];
                 string fullPath = Path.Combine(makeDirectory.ToRead_cs, path);
@@ -60,16 +54,10 @@ namespace Go5.File.IO.bestanden
                                 _Klass.Add(parts[2]);
                                 classnaam = parts[2];
                             }
-                            _Alles.Add(line);
-                            Array.Clear(parts, 0, parts.Length);
                         }
                         if (line.Contains("public " + classnaam))
                         {
                             _Constructor.Add(line);
-                        }
-                        if (!line.Contains("\n"))
-                        {
-                            countLijn++;
                         }
                         if (line.Contains("public void"))
                         {
@@ -90,18 +78,11 @@ namespace Go5.File.IO.bestanden
                     }
                     reader.Close();
                 }
-                if (_Alles.Count > 1)
-                {
-                    _Foutmelding.Add("FOUT!!  Er bevinden zich meer dan 1 class'e in een bestand!");
-                }
-                _Lijn.Add(countLijn.ToString());
                 _Using.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Namespace.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Klass.ForEach(Console.WriteLine);
-                Console.WriteLine("------------------------------------------------------------------------------------");
-                _Lijn.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Method.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
@@ -110,9 +91,7 @@ namespace Go5.File.IO.bestanden
                 _Inherits.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Constructor.ForEach(Console.WriteLine);
-                Console.WriteLine("------------------------------------------------------------------------------------");
-                _Foutmelding.Add("______________________________________________________________________________________" + "\n\n\n\n");
-                _Foutmelding.ForEach(Console.WriteLine);
+                Console.WriteLine("______________________________________________________________________________________\n\n\n\n");
 
                 foreach (string s in _Using)
                 {
@@ -125,11 +104,6 @@ namespace Go5.File.IO.bestanden
                 }
                 _LijstOpslagen.Add("\n");
                 foreach (string s in _Klass)
-                {
-                    _LijstOpslagen.Add(s);
-                }
-                _LijstOpslagen.Add("\n");
-                foreach (string s in _Lijn)
                 {
                     _LijstOpslagen.Add(s);
                 }
@@ -149,22 +123,18 @@ namespace Go5.File.IO.bestanden
                     _LijstOpslagen.Add(s);
                 }
                 _LijstOpslagen.Add("\n");
-                foreach (string s in _Foutmelding)
+                foreach (string s in _Constructor)
                 {
                     _LijstOpslagen.Add(s);
                 }
-                _LijstOpslagen.Add("\n");
-                _Alles.Clear();
-                _Foutmelding.Clear();
+                _LijstOpslagen.Add("______________________________________________________________________________________\n\n\n\n");
                 _Inherits.Clear();
                 _Klass.Clear();
-                _Lijn.Clear();
                 _Method.Clear();
                 _Namespace.Clear();
                 _Properties.Clear();
                 _Using.Clear();
                 _Constructor.Clear();
-                countLijn = 0;
             }
         }
         public List<string> GeefLijstOpgeslagen()
