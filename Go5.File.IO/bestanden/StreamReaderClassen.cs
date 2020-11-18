@@ -17,6 +17,7 @@ namespace Go5.File.IO.bestanden
         List<string> _Properties = new List<string>();
         List<string> _Inherits = new List<string>();
         List<string> _Constructor = new List<string>();
+        List<string> _VolledigString = new List<string>();
         public void StreamRead()
         {
             string[] arrDirectoryFiles = Directory.GetFiles(makeDirectory.ToRead_cs);
@@ -33,51 +34,142 @@ namespace Go5.File.IO.bestanden
                 string fullPath = Path.Combine(makeDirectory.ToRead_cs, path);
                 string line;
                 string classnaam = "***";
+                string volledigString = "";
                 using (StreamReader reader = new StreamReader(fullPath))
                 {
                     while ((line = reader.ReadLine()) != null)
                     {
-                        if (line.Contains("namespace"))
-                        {
-                            _Namespace.Add(line);
-                        }
-                        if (line.Contains("class"))
-                        {
-                            string[] parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                            if (parts[0] == "class")
-                            {
-                                _Klass.Add(parts[1]);
-                                classnaam = parts[1];
-                            }
-                            else
-                            {
-                                _Klass.Add(parts[2]);
-                                classnaam = parts[2];
-                            }
-                        }
-                        if (line.Contains("public " + classnaam))
-                        {
-                            _Constructor.Add(line.Trim());
-                        }
-                        if (line.Contains("public void"))
-                        {
-                            _Method.Add(line.Trim());
-                        }
-                        if (line.Contains("{ get; set; }"))
-                        {
-                            _Properties.Add(line.Trim());
-                        }
-                        if (line.Contains("using System"))
-                        {
-                            _Using.Add(line.Trim());
-                        }
-                        if (line.Contains("class") && line.Contains(":"))
-                        {
-                            _Inherits.Add(line.Trim());
-                        }
+                        volledigString += " " + line;
                     }
                     reader.Close();
+                    string[] array = volledigString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int k = 0; k < array.Length; k++)
+                    {
+                        _VolledigString.Add(array[k]);
+                    }
+
+                    //-------------------------------------------------USING
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "using")
+                        {
+                            _Using.Add(_VolledigString[j]);
+                            int c = 0;
+                            while(c == 0)
+                            {
+                                j++;
+                                foreach (char m in _VolledigString[j])
+                                {
+                                    if (m.ToString() == ";") c = 1;
+                                }
+                                _Using[_Using.Count -1] += " " + (_VolledigString[j]);
+                            }
+                        }
+                    }
+
+                    //-------------------------------------------------NAMESPACE
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "namespace")
+                        {
+                            _Namespace.Add(_VolledigString[j]);
+                            j++;
+                            _Namespace[_Namespace.Count -1] += " " + (_VolledigString[j]);
+                        }
+                    }
+
+                    //-------------------------------------------------CLASS
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "class")
+                        {
+                            _Klass.Add(_VolledigString[j+1]);
+                            classnaam = _VolledigString[j + 1];
+                        }
+                    }
+
+                    //-------------------------------------------------METHODE
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "void")
+                        {
+                            _Method.Add(_VolledigString[j -1]);
+                            _Method[_Method.Count - 1] += " " + _VolledigString[j];
+                            int c = 0;
+                            int open = 0;
+                            int gesloten = 0;
+                            while (c == 0)
+                            {
+                                j++;
+                                foreach (char m in _VolledigString[j])
+                                {
+                                    if (m.ToString() == "(") open++;
+                                    if (m.ToString() == ")") { gesloten++; if (gesloten == open) c = 1; }
+                                }
+                                _Method[_Method.Count - 1] += " " + (_VolledigString[j]);
+                            }
+                        }
+                    }
+
+                    //-------------------------------------------------PROPERTY
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "{" && _VolledigString[j+1] == "get;")
+                        {
+                            _Properties.Add(_VolledigString[j - 3]);
+                            _Properties[_Properties.Count - 1] += " " + _VolledigString[j-2] + " " + _VolledigString[j - 1] + " " + _VolledigString[j];
+                            int c = 0;
+                            int open = 1;
+                            int gesloten = 0;
+                            while (c == 0)
+                            {
+                                j++;
+                                foreach (char m in _VolledigString[j])
+                                {
+                                    if (m.ToString() == "{") open++;
+                                    if (m.ToString() == "}") { gesloten++; if (gesloten == open) c = 1; }
+                                }
+                                _Properties[_Properties.Count - 1] += " " + (_VolledigString[j]);
+                            }
+                        }
+                    }
+
+                    //-------------------------------------------------OVERERVING
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j] == "class" && _VolledigString[j + 2] == ":")
+                        {
+                            _Inherits.Add(_VolledigString[j +1]);
+                            _Inherits[_Inherits.Count - 1] += " " + _VolledigString[j+2] + " " + _VolledigString[j +3];
+                        }
+                    }
+
+                    //-------------------------------------------------CONSTRUCTOR
+                    for (int j = 0; j < _VolledigString.Count; j++)
+                    {
+                        if (_VolledigString[j].Contains(classnaam + "("))
+                        {
+                            _Constructor.Add(_VolledigString[j]);
+                            int c = 0;
+                            int open = 1;
+                            int gesloten = 0;
+                            while (c == 0)
+                            {
+                                j++;
+                                foreach (char m in _VolledigString[j])
+                                {
+                                    if (m.ToString() == "(") open++;
+                                    if (m.ToString() == ")") { gesloten++; if (gesloten == open) c = 1; }
+                                }
+                                _Constructor[_Constructor.Count - 1] += " " + (_VolledigString[j]);
+                            }
+                            classnaam = "***";
+                        }
+                    }
                 }
+                //_VolledigString.ForEach(Console.WriteLine);
+
                 _Using.ForEach(Console.WriteLine);
                 Console.WriteLine("------------------------------------------------------------------------------------");
                 _Namespace.ForEach(Console.WriteLine);
@@ -128,15 +220,17 @@ namespace Go5.File.IO.bestanden
                     _LijstOpslagen.Add(s);
                 }
                 _LijstOpslagen.Add("______________________________________________________________________________________\n\n\n\n");
-                _Inherits.Clear();
+                _Using.Clear();
+                _Namespace.Clear();
                 _Klass.Clear();
                 _Method.Clear();
-                _Namespace.Clear();
                 _Properties.Clear();
-                _Using.Clear();
+                _Inherits.Clear();
                 _Constructor.Clear();
+                _VolledigString.Clear();
             }
         }
+
         public List<string> GeefLijstOpgeslagen()
         {
             return _LijstOpslagen;
