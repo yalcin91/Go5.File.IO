@@ -8,7 +8,7 @@ namespace Go5.File.IO.bestanden
     public class MakeDirectory
     {
         public string InputFolder = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 5) File-IO\InputFolder\";
-        public string ZipBestand = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 2\Go5.Collections_Nieuwste_Console.zip";
+        public string ZipBestand = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 2) Collecties\Go5.Collecties.Nieuwste.zip";
         public string ToRead_cs = @"D:\Users\Yalcin\Desktop\HBO5\Programmeren Gevorderd\Taak - 5) File-IO\InputFolder\Go5.Collections_Nieuwste_Console\Go5.Collections.Nieuwste\Go5.Collections.Nieuwste\Collecties";   
         public string FileNameForClass = "Go5.ClassInfo.txt";
         public string FileNameForCsBestanden = "Go5.Analyse.txt";
